@@ -464,7 +464,7 @@ library.gui = library:create("ScreenGui", {
 -- library functions
 function library:window(properties)
 	local cfg = {
-		name = "wyverncrim", -- properties.Name or properties.name or properties.Title or properties.title or
+		name = "wyvern.crim", -- properties.Name or properties.name or properties.Title or properties.title or
 		size = properties.Size or properties.size or dim2(0, 500, 0, 650),
 	}
 
