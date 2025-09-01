@@ -56,7 +56,7 @@ getgenv().library = {
 	keybind_path,
 	panel_open = false,
 
-	directory = "Wyvern",
+	directory = "bre4kcor3",
 	folders = {
 		"/fonts",
 		"/configs",
@@ -418,6 +418,41 @@ function library:create(instance, options)
 end
 --
 
+local make_draggable = function(frame: Frame)
+	local dragging = false
+	local startpos = vec2(0, 0)
+	local newpos = frame.Position
+	frame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = true
+			startpos = uis:GetMouseLocation()
+		end
+	end)
+	uis.InputChanged:Connect(function(input)
+		if input.UserInputType ~= Enum.UserInputType.MouseMovement then
+			return
+		end
+		if not dragging then
+			return
+		end
+		local mouse_pos = uis:GetMouseLocation()
+		newpos = newpos + UDim2.fromOffset(mouse_pos.X - startpos.X, mouse_pos.Y - startpos.Y)
+		startpos = mouse_pos
+	end)
+	uis.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = false
+		end
+	end)
+	run.RenderStepped:Connect(function(delta)
+		if not dragging then
+			newpos = frame.Position
+			return
+		end
+		frame.Position = frame.Position:Lerp(newpos, delta * 30)
+	end)
+end
+
 library.gui = library:create("ScreenGui", {
 	Enabled = true,
 	Parent = coregui,
@@ -429,7 +464,7 @@ library.gui = library:create("ScreenGui", {
 -- library functions
 function library:window(properties)
 	local cfg = {
-		name = "Wyvern", -- properties.Name or properties.name or properties.Title or properties.title or
+		name = "bre4kcor3.lua", -- properties.Name or properties.name or properties.Title or properties.title or
 		size = properties.Size or properties.size or dim2(0, 500, 0, 650),
 	}
 
@@ -455,13 +490,14 @@ function library:window(properties)
 		BorderColor3 = Color3.fromRGB(0, 0, 0),
 		Size = UDim2.new(0, 0, 0, 40),
 		BackgroundColor3 = Color3.fromRGB(40, 40, 40),
-	})
+	}) :: Frame
 	-- dragdetector
-	library:create("UIDragDetector", {
-		Parent = inline1,
-		CursorIcon = "rbxassetid://0",
-		ActivatedCursorIcon = "rbxassetid://0",
-	})
+	-- local drag = library:create("UIDragDetector", {
+	-- 	Parent = inline1,
+	-- 	CursorIcon = "rbxassetid://0",
+	-- 	ActivatedCursorIcon = "rbxassetid://0",
+	-- }) :: UIDragDetector
+	make_draggable(inline1)
 
 	local accent_line = library:create("Frame", {
 		Parent = inline1,
@@ -616,11 +652,12 @@ function library:window(properties)
 		BackgroundColor3 = Color3.fromRGB(40, 40, 40),
 	})
 	-- dragdetector
-	library:create("UIDragDetector", {
-		Parent = inline1,
-		CursorIcon = "rbxassetid://0",
-		ActivatedCursorIcon = "rbxassetid://0",
-	})
+	-- library:create("UIDragDetector", {
+	-- 	Parent = inline1,
+	-- 	CursorIcon = "rbxassetid://0",
+	-- 	ActivatedCursorIcon = "rbxassetid://0",
+	-- })
+	make_draggable(inline1)
 
 	table.insert(library.main_frame, inline1)
 	local WINDOW_PATH = inline1
@@ -793,11 +830,12 @@ function library:window(properties)
 		BackgroundColor3 = Color3.fromRGB(56, 56, 56),
 	})
 	-- dragdetector
-	library:create("UIDragDetector", {
-		Parent = esp_preview,
-		CursorIcon = "rbxassetid://0",
-		ActivatedCursorIcon = "rbxassetid://0",
-	})
+	-- library:create("UIDragDetector", {
+	-- 	Parent = esp_preview,
+	-- 	CursorIcon = "rbxassetid://0",
+	-- 	ActivatedCursorIcon = "rbxassetid://0",
+	-- })
+	make_draggable(esp_preview)
 	library:make_resizable(esp_preview)
 
 	local name = library:create("TextLabel", {
@@ -1516,11 +1554,12 @@ function library:window(properties)
 		BackgroundColor3 = Color3.fromRGB(56, 56, 56),
 	})
 	-- dragdetector
-	library:create("UIDragDetector", {
-		Parent = playerlist,
-		CursorIcon = "rbxassetid://0",
-		ActivatedCursorIcon = "rbxassetid://0",
-	})
+	-- library:create("UIDragDetector", {
+	-- 	Parent = playerlist,
+	-- 	CursorIcon = "rbxassetid://0",
+	-- 	ActivatedCursorIcon = "rbxassetid://0",
+	-- })
+	make_draggable(playerlist)
 	library:make_resizable(playerlist)
 
 	table.insert(library.main_frame, playerlist)
@@ -2129,11 +2168,12 @@ function library:window(properties)
 		BackgroundColor3 = Color3.fromRGB(40, 40, 40),
 	})
 	-- dragdetector
-	library:create("UIDragDetector", {
-		Parent = old_kblist,
-		CursorIcon = "rbxassetid://0",
-		ActivatedCursorIcon = "rbxassetid://0",
-	})
+	-- library:create("UIDragDetector", {
+	-- 	Parent = old_kblist,
+	-- 	CursorIcon = "rbxassetid://0",
+	-- 	ActivatedCursorIcon = "rbxassetid://0",
+	-- })
+	make_draggable(old_kblist)
 
 	local glow = library:create("ImageLabel", {
 		Parent = old_kblist,
@@ -3422,6 +3462,7 @@ function library:toggle(properties)
 		Padding = UDim.new(0, 4),
 		SortOrder = Enum.SortOrder.LayoutOrder,
 	})
+
 	--
 
 	local info = TweenInfo.new(0.3, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
@@ -3454,6 +3495,7 @@ function library:toggle(properties)
 	self.previous_holder = left_components
 	self.bottom_holder = bottom_components
 	self.right_holder = right_components
+	self.last = cfg
 
 	config_flags[cfg.flag] = cfg.set
 
@@ -4756,16 +4798,31 @@ function library:keybind(properties)
 	local cfg = {
 		flag = properties.flag or tostring(2 ^ math.random(1, 30) * 3),
 		keybind_name = properties.keybind_name or nil,
-		callback = properties.callback or function() end,
+		callback = properties.callback,
 		open = false,
 		binding = nil,
-		name = properties.name or nil,
+		name = properties.name,
 		key = properties.default or properties.key or nil,
 		mode = properties.mode or "toggle",
 		active = properties.default or false,
 		display = properties.displayName or properties.display or properties.name or nil,
 		hold_instances = {},
 	}
+	local has_parent = cfg.name == nil
+	local last = self.last
+	if has_parent and last and cfg.callback == nil then
+		-- no name = parenting to last element
+		cfg.callback = function(state: boolean)
+			if cfg.mode == "toggle" then
+				state = not last.enabled
+				-- elseif cfg.mode == "hold" then
+			end
+			last.enabled = state
+			last.set(state)
+		end
+	elseif cfg.callback == nil then
+		cfg.callback = function() end
+	end
 
 	flags[cfg.flag] = {}
 
@@ -4815,6 +4872,8 @@ function library:keybind(properties)
 		})
 	end
 
+	self.right_holder.BackgroundTransparency = 0
+	self.right_holder.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 	local keybind = library:create("TextButton", {
 		Parent = cfg.name and right_components or self.right_holder,
 		Name = "",
@@ -4938,6 +4997,7 @@ function library:keybind(properties)
 		BorderSizePixel = 0,
 		TextSize = 12,
 		BackgroundColor3 = Color3.fromRGB(65, 65, 65),
+		Visible = not has_parent,
 	})
 
 	local UIPadding = library:create("UIPadding", {
